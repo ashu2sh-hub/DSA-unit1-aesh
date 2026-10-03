@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Unit 1 — Basic Terminologies, Algorithm Analysis & Searching</title>
+<style>
+:root{
+  --navy:#102542;
+  --blue:#1f6feb;
+  --teal:#0e9594;
+  --orange:#f08a24;
+  --bg:#f4f6fa;
+  --card:#ffffff;
+  --text:#1b2330;
+  --muted:#5b6474;
+  --border:#e1e6ef;
+  --code-bg:#0d1526;
+  --code-text:#d9e3f5;
+  --success:#1b9e5b;
+  --danger:#d9453d;
+  --radius:12px;
+  --shadow:0 2px 10px rgba(16,37,66,0.08);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+}
+a{color:var(--blue);text-decoration:none;}
+h1,h2,h3,h4{font-family:"Segoe UI",Roboto,sans-serif;color:var(--navy);line-height:1.3;}
+h2{border-bottom:3px solid var(--teal);padding-bottom:8px;margin-top:0;}
+h3{color:var(--blue);margin-top:28px;}
+h4{color:var(--navy);margin-bottom:6px;}
+p{margin:10px 0;}
+code{font-family:"Consolas","Courier New",monospace;background:#eef1f8;padding:2px 6px;border-radius:5px;color:#b83280;font-size:0.92em;}
+
+/* LAYOUT */
+.layout{display:flex;min-height:100vh;}
+.sidebar{
+  width:270px;
+  background:var(--navy);
+  color:#dfe8f7;
+  position:fixed;
+  top:0;left:0;bottom:0;
+  overflow-y:auto;
+  padding:18px 0 40px 0;
+  z-index:200;
+  transition:transform .3s ease;
+}
+.sidebar h3{color:#9fd6d4;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin:18px 20px 6px 20px;}
+.sidebar a{
+  display:block;
+  color:#dfe8f7;
+  padding:8px 22px;
+  font-size:14.5px;
+  border-left:3px solid transparent;
+}
+.sidebar a:hover,.sidebar a.active{
+  background:rgba(255,255,255,0.08);
+  border-left:3px solid var(--orange);
+  color:#fff;
+}
+.sidebar .brand{
+  padding:16px 20px 10px 20px;
+  font-weight:700;
+  font-size:17px;
+  color:#fff;
+  border-bottom:1px solid rgba(255,255,255,0.15);
+  margin-bottom:6px;
+}
+.sidebar .brand span{display:block;font-weight:400;font-size:12px;color:#9fb3cf;margin-top:3px;}
+.menu-toggle{
+  display:none;
+  position:fixed;
+  top:14px;left:14px;
+  z-index:300;
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  padding:10px 14px;
+  border-radius:8px;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+}
+main{
+  margin-left:270px;
+  flex:1;
+  padding:0;
+  max-width:1050px;
+}
+.section{
+  padding:40px 50px;
+  border-bottom:1px dashed var(--border);
+}
+.section:nth-child(even){background:#fbfcff;}
+
+/* COVER */
+.cover{
+  background:linear-gradient(135deg,var(--navy) 0%,#1b3a63 60%,var(--teal) 100%);
+  color:#fff;
+  padding:70px 50px;
+  text-align:left;
+}
+.cover .tag{
+  display:inline-block;
+  background:rgba(255,255,255,0.15);
+  padding:5px 14px;
+  border-radius:20px;
+  font-size:13px;
+  letter-spacing:1px;
+  margin-bottom:18px;
+}
+.cover h1{color:#fff;font-size:42px;margin:0 0 8px 0;}
+.cover h2{color:#cfe3ff;border:none;font-size:22px;font-weight:400;margin:0 0 30px 0;padding:0;}
+.cover .topics-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:20px;
+}
+.cover .topics-grid div{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.25);
+  padding:10px 14px;
+  border-radius:8px;
+  font-size:14.5px;
+}
+
+/* CALLOUTS */
+.box{
+  border-radius:var(--radius);
+  padding:16px 20px;
+  margin:18px 0;
+  box-shadow:var(--shadow);
+  border-left:5px solid var(--blue);
+  background:#eef5ff;
+}
+.box.tip{border-left-color:var(--teal);background:#e9faf7;}
+.box.warn{border-left-color:var(--orange);background:#fff6ea;}
+.box.exam{border-left-color:#7c3aed;background:#f4edff;}
+.box.def{border-left-color:var(--navy);background:#edf1f8;}
+.box h4{margin-top:0;}
+.box.exam h4::before{content:"🎓 ";}
+.box.tip h4::before{content:"💡 ";}
+.box.warn h4::before{content:"⚠️ ";}
+.box.def h4::before{content:"📘 ";}
+
+/* TABLES */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:16px 0;
+  background:var(--card);
+  box-shadow:var(--shadow);
+  border-radius:10px;
+  overflow:hidden;
+  font-size:14.5px;
+}
+th,td{
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  text-align:left;
+}
+th{background:var(--navy);color:#fff;font-weight:600;}
+tr:nth-child(even){background:#f7f9fc;}
+tr:hover{background:#eef5ff;}
+
+/* CODE */
+.code-wrap{position:relative;margin:16px 0;}
+pre{
+  background:var(--code-bg);
+  color:var(--code-text);
+  padding:18px;
+  border-radius:10px;
+  overflow-x:auto;
+  font-size:13.5px;
+  line-height:1.55;
+  margin:0;
+}
+.copy-btn{
+  position:absolute;
+  top:10px;right:10px;
+  background:var(--teal);
+  color:#fff;
+  border:none;
+  padding:5px 12px;
+  border-radius:6px;
+  font-size:12px;
+  cursor:pointer;
+  opacity:0.9;
+}
+.copy-btn:hover{opacity:1;}
+.copy-btn.copied{background:var(--success);}
+
+/* DETAILS/COLLAPSIBLE */
+details{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin:14px 0;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+summary{
+  padding:13px 18px;
+  cursor:pointer;
+  font-weight:600;
+  color:var(--navy);
+  background:#eef3fa;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+summary::-webkit-details-marker{display:none;}
+summary::before{content:"▶";font-size:11px;color:var(--teal);transition:transform .2s;}
+details[open] summary::before{transform:rotate(90deg);}
+details .inner{padding:16px 20px;}
+
+/* FLASHCARDS */
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:20px 0;}
+.flashcard{
+  perspective:1000px;
+  height:150px;
+  cursor:pointer;
+}
+.flashcard .inner-card{
+  position:relative;width:100%;height:100%;
+  transition:transform .6s;
+  transform-style:preserve-3d;
+}
+.flashcard.flipped .inner-card{transform:rotateY(180deg);}
+.flash-face{
+  position:absolute;width:100%;height:100%;
+  backface-visibility:hidden;
+  border-radius:10px;
+  padding:16px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  box-shadow:var(--shadow);
+  font-size:14.5px;
+}
+.flash-front{background:var(--blue);color:#fff;font-weight:600;}
+.flash-back{background:var(--navy);color:#eef3fa;transform:rotateY(180deg);font-size:13.5px;}
+
+/* QUIZ */
+.quiz-q{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:16px 20px;
+  margin:16px 0;
+  box-shadow:var(--shadow);
+}
+.quiz-q p.question{font-weight:600;margin-bottom:10px;}
+.quiz-q label{
+  display:block;
+  padding:8px 12px;
+  margin:6px 0;
+  border:1px solid var(--border);
+  border-radius:8px;
+  cursor:pointer;
+}
+.quiz-q label:hover{background:#f3f7ff;}
+.quiz-q .check-btn{
+  margin-top:10px;
+  background:var(--teal);
+  color:#fff;
+  border:none;
+  padding:8px 18px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13.5px;
+}
+.quiz-feedback{margin-top:10px;font-weight:600;padding:8px 12px;border-radius:8px;display:none;}
+.quiz-feedback.correct{background:#e3f9ee;color:var(--success);display:block;}
+.quiz-feedback.wrong{background:#fdecec;color:var(--danger);display:block;}
+.quiz-q label.correct-ans{border-color:var(--success);background:#e3f9ee;}
+.quiz-q label.wrong-ans{border-color:var(--danger);background:#fdecec;}
+
+/* MCQ score */
+#quizScoreBox{
+  position:sticky;top:10px;
+  background:var(--navy);color:#fff;
+  padding:10px 16px;border-radius:10px;
+  display:inline-block;margin-bottom:16px;font-weight:600;
+}
+
+/* dry-run step table */
+.steps{border-left:3px solid var(--teal);padding-left:16px;margin:14px 0;}
+.steps .step{margin-bottom:8px;}
+.steps .step b{color:var(--teal);}
+
+/* badges */
+.badge{display:inline-block;padding:3px 10px;border-radius:14px;font-size:12px;font-weight:700;color:#fff;background:var(--blue);margin-right:6px;}
+.badge.o{background:#d9453d;}
+.badge.omega{background:#1b9e5b;}
+.badge.theta{background:#7c3aed;}
+
+/* responsive */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  main{margin-left:0;}
+  .menu-toggle{display:block;}
+  .section{padding:26px 20px;}
+  .cover{padding:80px 22px 40px 22px;}
+  .cover .topics-grid{grid-template-columns:1fr;}
+}
+
+.toc-list{columns:2;column-gap:40px;}
+.toc-list a{display:block;margin-bottom:8px;padding:6px 10px;background:var(--card);border-radius:8px;box-shadow:var(--shadow);font-size:14px;}
+@media(max-width:700px){.toc-list{columns:1;}}
+
+footer{padding:30px 50px;background:var(--navy);color:#bcd0eb;font-size:13px;}
+.last-min{
+  background:var(--card);
+  border:2px solid var(--teal);
+  border-radius:14px;
+  padding:20px 26px;
+}
+.last-min h4{color:var(--teal);border-bottom:1px solid var(--border);padding-bottom:4px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="brand">DSA Unit 1<span>Study Notes — Interactive</span></div>
+  <h3>Navigate</h3>
+  <a href="#cover">🏠 Cover</a>
+  <a href="#roadmap">🗺️ Roadmap</a>
+  <a href="#data-basics">1. Data & Data Types</a>
+  <a href="#elementary">2. Elementary Data Organization</a>
+  <a href="#ds-def">3. Data Structures</a>
+  <a href="#ds-types">4. Types of Data Structures</a>
+  <a href="#adt">5. Abstract Data Types</a>
+  <a href="#operations">6. DS Operations</a>
+  <a href="#algorithm">7. Algorithm</a>
+  <a href="#analysis">8. Algorithm Analysis</a>
+  <a href="#tradeoff">9. Time–Space Trade-off</a>
+  <a href="#asymptotic">10. Asymptotic Notations</a>
+  <a href="#complexity-eg">11. Complexity Examples</a>
+  <a href="#searching">12. Searching</a>
+  <a href="#linear-search">— Linear Search</a>
+  <a href="#binary-search">— Binary Search</a>
+  <a href="#comparison">13. Comparison Tables</a>
+  <a href="#revision">14. Quick Revision</a>
+  <a href="#summary">15. Unit Summary</a>
+  <a href="#cheatsheet">16. Last-Minute Sheet</a>
+  <a href="#flashcards">17. Flashcards</a>
+  <a href="#questions">18. Practice Questions</a>
+  <a href="#quiz">19. MCQ Quiz</a>
+</nav>
+
+<main>
+
+<!-- ===================== COVER ===================== -->
+<section class="section cover" id="cover">
+  <div class="tag">DATA STRUCTURES &amp; ALGORITHMS — 26CSEC302</div>
+  <h1>DSA — Data Structures and Algorithms</h1>
+  <h2>Unit 1: Basic Terminologies, Algorithm Analysis, Asymptotic Notations & Searching</h2>
+  <p style="max-width:650px;color:#dfe8f7;">A complete, exam-ready interactive study guide. Built from your syllabus and
+  university lecture material — covering every definition, classification, algorithm, dry run and complexity
+  analysis you need for Unit 1.</p>
+  <div class="topics-grid">
+    <div>✔ Elementary Data Organization</div>
+    <div>✔ Data Structure Operations</div>
+    <div>✔ Abstract Data Types (ADT)</div>
+    <div>✔ Analysis of Algorithms</div>
+    <div>✔ Time & Space Complexity</div>
+    <div>✔ Time–Space Trade-off</div>
+    <div>✔ Asymptotic Notations (O, Ω, Θ, o, ω)</div>
+    <div>✔ Linear Search & Binary Search</div>
+  </div>
+</section>
+
+<!-- ===================== ROADMAP ===================== -->
+<section class="section" id="roadmap">
+  <h2>🗺️ Unit Roadmap / Contents</h2>
+  <p>This unit builds the <b>foundation</b> of the entire DSA course. First we understand what data and data
+  structures are, then how to measure how "good" an algorithm is (complexity analysis), and finally apply this
+  knowledge to the simplest algorithms of all — searching.</p>
+  <div class="toc-list">
+    <a href="#data-basics">1. Data Types & Data Structures — basics</a>
+    <a href="#elementary">2. Elementary Data Organization</a>
+    <a href="#ds-def">3. Definition & Representation of Data Structures</a>
+    <a href="#ds-types">4. Classification of Data Structures</a>
+    <a href="#adt">5. Abstract Data Types (ADT)</a>
+    <a href="#operations">6. Operations on Data Structures</a>
+    <a href="#algorithm">7. Algorithm — Definition & Characteristics</a>
+    <a href="#analysis">8. Analysis of Algorithm (Time & Space Complexity)</a>
+    <a href="#tradeoff">9. Time–Space Trade-off</a>
+    <a href="#asymptotic">10. Asymptotic Notations — O, Ω, Θ, o, ω</a>
+    <a href="#complexity-eg">11. Worked Complexity Examples</a>
+    <a href="#searching">12. Searching Techniques</a>
+    <a href="#comparison">13. Complexity Comparison Tables</a>
+    <a href="#revision">14. Section-wise Quick Revision</a>
+    <a href="#summary">15. Complete Unit Summary</a>
+    <a href="#cheatsheet">16. One-Page Last-Minute Sheet</a>
+    <a href="#flashcards">17. Interactive Flashcards</a>
+    <a href="#questions">18. Practice Questions (Exam Style)</a>
+    <a href="#quiz">19. Final MCQ Quiz</a>
+  </div>
+  <div class="box tip">
+    <h4>How to use this guide</h4>
+    <p>Click section headings in the sidebar to jump directly. Click <b>"▶ titles"</b> to expand dry-runs,
+    code and proofs. Flip the flashcards to self-test. Attempt the quiz at the end for instant feedback.</p>
+  </div>
+</section>
+
+<!-- ===================== 1. DATA & DATA TYPES ===================== -->
+<section class="section" id="data-basics">
+  <h2>1. Data, Data Types & Data Structures — The Basics</h2>
+
+  <h3>1.1 What is Data?</h3>
+  <p>Every application reads data, processes it, stores it temporarily, and produces output data. <b>Data</b> is
+  simply a collection of raw facts — numbers, characters, etc. — that a program works on.</p>
+  <div class="box def">
+    <h4>Flow of a Program</h4>
+    <p><code>Data (input)</code> → <code>Application Program (processing)</code> → <code>Data (output)</code></p>
+  </div>
+
+  <h3>1.2 Data Type</h3>
+  <p>Data is classified into <b>data types</b> such as <code>int</code>, <code>char</code>, <code>float</code>, etc.
+  A data type is defined by two things:</p>
+  <ol>
+    <li><b>A domain</b> — the set of allowed values the data type can hold.</li>
+    <li><b>A set of operations</b> — the valid operations that can be performed on those values.</li>
+  </ol>
+  <p>If a program performs a wrong/illegal operation on a data type, the compiler raises an error.
+  Example: <code>char x, y, z; z = x * y;</code> is invalid because multiplication is not a defined operation on
+  <code>char</code>.</p>
+
+  <table>
+    <tr><th>Data Type</th><th>Domain</th><th>Operations</th></tr>
+    <tr><td>boolean</td><td>0, 1</td><td>AND, OR, =, etc.</td></tr>
+    <tr><td>char</td><td>ASCII set</td><td>=, &lt;&gt;, &lt;, etc.</td></tr>
+    <tr><td>integer</td><td>-maxint to +maxint</td><td>+, -, =, ==, &lt;&gt;, &lt;, etc.</td></tr>
+  </table>
+
+  <h3>1.3 Built-in vs User-defined Types</h3>
+  <table>
+    <tr><th>Type</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>Built-in Type</td><td>Already defined within the programming language</td><td><code>int</code>, <code>float</code>, <code>char</code></td></tr>
+    <tr><td>User-defined Type</td><td>Defined & implemented by the programmer</td><td><code>typedef</code>, <code>struct</code>, <code>class</code></td></tr>
+  </table>
+
+  <h3>1.4 Simple (Atomic) vs Structured Data Types</h3>
+  <div class="box def">
+    <h4>Simple / Atomic Data Types</h4>
+    <p>Have <b>no component parts</b> — they cannot be broken down further. Example: <code>int</code>,
+    <code>char</code>, <code>float</code> — e.g. <code>18</code>, <code>2.5</code>, <code>'x'</code>.</p>
+  </div>
+  <div class="box def">
+    <h4>Structured Data Types</h4>
+    <p>Can be <b>broken down into component parts (fields)</b>. Example: an object, array, set, file.</p>
+    <p><b>Example — Student record:</b> A student object has components <code>Name</code>, <code>Age</code>,
+    and <code>Branch</code> — each a separate "component part" of the whole structure.</p>
+  </div>
+
+  <h3>1.5 Possible Organizational Structures</h3>
+  <p>When elements of structured data are organized, four fundamental shapes are commonly used:</p>
+  <table>
+    <tr><th>Structure</th><th>Description</th></tr>
+    <tr><td><b>Set</b></td><td>Elements with no particular relationship/order among them.</td></tr>
+    <tr><td><b>Linear</b></td><td>Elements arranged in a sequence, one after another.</td></tr>
+    <tr><td><b>Tree</b></td><td>Hierarchical, parent–child relationship between elements.</td></tr>
+    <tr><td><b>Graph</b></td><td>Elements (nodes) connected by edges with no strict hierarchy.</td></tr>
+  </table>
+</section>
+
+<!-- ===================== 2. ELEMENTARY DATA ORGANIZATION ===================== -->
+<section class="section" id="elementary">
+  <h2>2. Elementary Data Organization</h2>
+  <p>Before data can be structured into arrays, lists, trees etc., we must understand the basic "building block"
+  terminology used to describe how raw data is organized into meaningful units.</p>
+
+  <table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td><b>Data</b></td><td>Collection of raw, unprocessed facts and figures (numbers, characters, symbols).</td></tr>
+    <tr><td><b>Data Item</b></td><td>A single unit of value. Divided into <i>Group Items</i> (can be divided further, e.g. "Date" → day, month, year) and <i>Elementary Items</i> (cannot be divided further, e.g. a single digit).</td></tr>
+    <tr><td><b>Entity</b></td><td>Something that has certain attributes/properties which may be assigned values. E.g., "Student" is an entity.</td></tr>
+    <tr><td><b>Attribute / Field</b></td><td>A property of an entity. E.g., Name, Age, Roll No. are attributes of the entity "Student".</td></tr>
+    <tr><td><b>Record</b></td><td>A collection of related fields/attribute values describing one entity. E.g., one student's complete details.</td></tr>
+    <tr><td><b>File</b></td><td>A collection of related records. E.g., the record of all students in a class.</td></tr>
+  </table>
+
+  <div class="box tip">
+    <h4>Memory Hook</h4>
+    <p><b>Data Item → Entity → Attribute (Field) → Record → File</b> — exactly how a database table is built:
+    a <i>file</i> is made of <i>records</i> (rows), and each <i>record</i> is made of <i>fields</i> (columns).</p>
+  </div>
+</section>
+
+<!-- ===================== 3. DATA STRUCTURE DEFINITION ===================== -->
+<section class="section" id="ds-def">
+  <h2>3. Data Structure — Definition & Representation</h2>
+
+  <div class="box def">
+    <h4>Definitions (any one is exam-ready)</h4>
+    <p>1. A data structure is a way of <b>storing and organizing data</b> in a computer so it can be used efficiently.</p>
+    <p>2. When elements of data are organized together in terms of some relationship among the elements, the
+    organization is called a <b>data structure</b>.</p>
+    <p>3. A data structure is a <b>scheme</b> for organizing data in computer memory.</p>
+    <p>4. A data structure is a set of <b>data values</b> together with the <b>relationships</b> between them and
+    the <b>set of operations</b> permitted to be performed on them.</p>
+  </div>
+
+  <h3>3.1 Why Data Structures Matter</h3>
+  <p>The way data is organized directly affects the <b>performance</b> of a program. Programmers pick a data
+  structure based on the nature of the data and what operations need to be done efficiently on it.</p>
+
+  <h3>3.2 Example — Choosing between a Queue and a Binary Tree</h3>
+  <table>
+    <tr><th>Structure</th><th>Diagram Concept</th><th>Best suited for</th></tr>
+    <tr><td><b>Queue</b></td><td>Front → [■][■][■][■] → Back (FIFO)</td>
+        <td>Maintaining order, e.g. print jobs on a network printer — jobs printed in the order received.</td></tr>
+    <tr><td><b>Binary Tree</b></td><td>Root with left/right children, smaller values left, larger right</td>
+        <td>Searching sorted data fast — each comparison halves the remaining data (like a phone directory).</td></tr>
+  </table>
+
+  <h3>3.3 Common Basic Data Structures</h3>
+  <p><code>Array</code> · <code>Linked List</code> · <code>Stack</code> · <code>Queue</code> · <code>Tree</code> ·
+  <code>Graph</code></p>
+
+  <h3>3.4 Transient vs Permanent Data Structures</h3>
+  <table>
+    <tr><th>Type</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td><b>Transient</b></td><td>Created when the program starts, destroyed when it ends.</td><td>An array held in main memory (RAM).</td></tr>
+    <tr><td><b>Permanent</b></td><td>Exists before the program starts and is preserved after it ends.</td><td>A data file on disk, a database.</td></tr>
+  </table>
+</section>
+
+<!-- ===================== 4. TYPES OF DATA STRUCTURES ===================== -->
+<section class="section" id="ds-types">
+  <h2>4. Classification of Data Structures</h2>
+
+  <h3>4.1 Based on Organization: Linear vs Non-Linear</h3>
+  <div class="box def">
+    <h4>Linear Data Structure</h4>
+    <p>Data elements are arranged <b>sequentially</b>; each element is connected to its previous and next
+    element. This lets you traverse the whole structure in a single run/level. Easy to implement since computer
+    memory itself is sequential.</p>
+    <p><b>Examples:</b> Array, Stack, Queue, Linked List.</p>
+  </div>
+  <div class="box def">
+    <h4>Non-Linear Data Structure</h4>
+    <p>Elements do <b>not</b> follow a single sequence; each element may connect to multiple other elements
+    (multi-level storage). Harder to implement, but often uses memory more efficiently.</p>
+    <p><b>Examples:</b> Tree, Graph, Hash Table, Heap.</p>
+  </div>
+
+  <table>
+    <tr><th></th><th>Linear</th><th>Non-Linear</th></tr>
+    <tr><td>Arrangement</td><td>Sequential, one after another</td><td>Hierarchical / networked</td></tr>
+    <tr><td>Traversal</td><td>Single run/level</td><td>May need multiple levels</td></tr>
+    <tr><td>Memory use</td><td>Simple, but may waste space</td><td>More efficient but complex</td></tr>
+    <tr><td>Examples</td><td>Array, Stack, Queue, Linked List</td><td>Tree, Graph, Hash Table, Heap</td></tr>
+  </table>
+
+  <h3>4.2 Based on Data Type: Homogeneous vs Non-Homogeneous</h3>
+  <table>
+    <tr><th>Type</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td><b>Homogeneous</b></td><td>Stores values of the <i>same</i> data type.</td><td>Array</td></tr>
+    <tr><td><b>Non-Homogeneous</b></td><td>Groups values of <i>different</i> data types together.</td><td>Structures, Classes</td></tr>
+  </table>
+
+  <h3>4.3 Storage Container View</h3>
+  <table>
+    <tr><th>Container</th><th>Description</th></tr>
+    <tr><td><b>Array</b></td><td>Contiguous memory; language-supported, but fixed size — needs care of overflow.</td></tr>
+    <tr><td><b>Vector</b></td><td>Like an array but handles resizing/overflow automatically.</td></tr>
+    <tr><td><b>Linked List</b></td><td>Data connected via "links" (pointers) — saves space that might be wasted in arrays.</td></tr>
+    <tr><td><b>Combination</b></td><td>Hybrid structures combining vector + linked list properties.</td></tr>
+  </table>
+
+  <details>
+    <summary>Diagram: Basic Data Structure Shapes</summary>
+    <div class="inner">
+      <p><b>Array</b>: <code>[■][■][■][■][■][■][■][■][■][■][■]</code> — contiguous boxes</p>
+      <p><b>Linked List</b>: <code>[■]→[■]→[■]→[■]→[■]→[■]→[■]</code> — boxes joined by arrows (pointers)</p>
+      <p><b>Stack</b>: a cylinder — items pushed/popped only from the <i>top</i></p>
+      <p><b>Queue</b>: a cylinder with entry at one end, exit at the other (FIFO)</p>
+      <p><b>Tree</b>: a root node branching down into child nodes (hierarchy)</p>
+    </div>
+  </details>
+</section>
+
+<!-- ===================== 5. ABSTRACT DATA TYPE ===================== -->
+<section class="section" id="adt">
+  <h2>5. Abstract Data Types (ADT)</h2>
+
+  <h3>5.1 What is Abstraction?</h3>
+  <p><b>Abstraction</b> means hiding implementation details and showing only the essential features to the user.
+  Example: an integer like <code>243</code> is internally represented as
+  <code>2×10² + 4×10¹ + 3×10⁰</code>, but we never need to think about this while using it.</p>
+
+  <div class="box def">
+    <h4>Definition — Abstract Data Type (ADT)</h4>
+    <p>An ADT is a simple or structured data type whose <b>implementation details are hidden</b> from the user.
+    It is a <b>mathematical model</b> along with a collection of <b>operations</b> defined on that model.
+    The internal representation is <i>encapsulated</i> and not visible to users of the ADT.</p>
+  </div>
+
+  <h3>5.2 Two Key Questions While Designing an ADT</h3>
+  <table>
+    <tr><th>Question</th><th>Answered by</th></tr>
+    <tr><td><b>WHAT</b> values are in the domain? <b>WHAT</b> operations can be performed?</td><td><b>Specification</b> (written first)</td></tr>
+    <tr><td><b>HOW</b> is the data type represented? <b>HOW</b> are operations implemented?</td><td><b>Implementation</b> (written after specification)</td></tr>
+  </table>
+
+  <h3>5.3 Users vs Implementers</h3>
+  <p>A <b>user</b> of an ADT only needs to know the <b>specification</b> (what it does) — never the implementation
+  details. An <b>implementer</b> must know specification + representation + implementation (how it is built).</p>
+
+  <details>
+    <summary>Diagram: ADT Design Flow</summary>
+    <div class="inner">
+      <p><code>Elements + Structure → Domain + Operations → Specification (user-visible)
+      → Representation → Implementation (implementer-only)</code></p>
+    </div>
+  </details>
+
+  <h3>5.4 ADT in Programming Languages</h3>
+  <p>An ADT is an abstract model of a data structure together with the operations (algorithms) that process it.
+  In C++ / Java, an ADT is typically implemented as a <b>class</b>; in C, it is typically implemented using a
+  <code>struct</code> plus a set of functions that operate on it.</p>
+
+  <div class="box exam">
+    <h4>Exam-ready Answer: Define ADT</h4>
+    <p>"An Abstract Data Type (ADT) is a mathematical/logical model of a data structure defined purely by its
+    behaviour — i.e., the set of values it can hold and the set of operations that can be performed on it —
+    without specifying how these are implemented internally. The implementation details are hidden from the
+    user (encapsulation); only the specification is exposed. Example: a <i>Stack ADT</i> defines operations
+    push(), pop(), peek(), isEmpty() without saying whether it is implemented using an array or a linked list."</p>
+  </div>
+</section>
+
+<!-- ===================== 6. OPERATIONS ON DATA STRUCTURES ===================== -->
+<section class="section" id="operations">
+  <h2>6. Data Structure Operations</h2>
+  <p>Every data structure supports a standard set of operations that let us build and use it. The syllabus
+  highlights <b>insertion, deletion, traversal</b> as key operations — below is the complete standard list.</p>
+
+  <table>
+    <tr><th>Operation</th><th>What it does</th><th>Example (on an Array)</th></tr>
+    <tr><td><b>Traversal</b></td><td>Visiting/accessing every element of the structure exactly once, usually to process or print it.</td><td>Printing all elements of an array from index 0 to n-1.</td></tr>
+    <tr><td><b>Insertion</b></td><td>Adding a new element into the structure.</td><td>Inserting a new value at a given position in an array (shifting elements right).</td></tr>
+    <tr><td><b>Deletion</b></td><td>Removing an existing element from the structure.</td><td>Deleting a value from an array (shifting elements left to fill the gap).</td></tr>
+    <tr><td><b>Searching</b></td><td>Finding whether a given value is present, and if so, where.</td><td>Linear Search / Binary Search (covered in detail in Section 12).</td></tr>
+    <tr><td><b>Sorting</b></td><td>Arranging elements in a particular order (ascending/descending).</td><td>Selection sort, Bubble sort, etc.</td></tr>
+    <tr><td><b>Merging</b></td><td>Combining elements of two similar/sorted structures into a single one.</td><td>Merging two sorted arrays into one sorted array.</td></tr>
+  </table>
+
+  <div class="box tip">
+    <h4>Why these operations matter</h4>
+    <p>Almost the entire DSA course is about implementing these six operations efficiently (in less time and/or
+    space) for different data structures. That is exactly why we need <b>algorithm analysis</b> — covered next.</p>
+  </div>
+</section>
+
+<!-- ===================== 7. ALGORITHM ===================== -->
+<section class="section" id="algorithm">
+  <h2>7. Algorithm — Definition & Characteristics</h2>
+
+  <div class="box def">
+    <h4>Definition</h4>
+    <p>An <b>algorithm</b> is a finite sequence of well-defined, unambiguous instructions that, when followed,
+    accomplish a particular task or solve a computational problem.</p>
+  </div>
+
+  <h3>7.1 Characteristics of a Good Algorithm</h3>
+  <table>
+    <tr><th>Characteristic</th><th>Description</th><th>Importance</th></tr>
+    <tr><td><b>Input</b></td><td>Zero or more well-defined inputs.</td><td>Determines scope of the problem.</td></tr>
+    <tr><td><b>Output</b></td><td>At least one well-defined output matching the desired result.</td><td>Problem-solving goal.</td></tr>
+    <tr><td><b>Definiteness / Unambiguous</b></td><td>Every step and its inputs/outputs must be clear and have only one meaning.</td><td>Removes ambiguity.</td></tr>
+    <tr><td><b>Finiteness</b></td><td>Must terminate after a finite number of steps.</td><td>Guarantees a result is produced.</td></tr>
+    <tr><td><b>Effectiveness / Feasibility</b></td><td>Each instruction must be simple enough to be carried out exactly, in finite time, with available resources.</td><td>Feasibility of execution.</td></tr>
+    <tr><td><b>Generality</b></td><td>Should solve a general class of problems, not just one specific instance.</td><td>Reusability and robustness.</td></tr>
+    <tr><td><b>Independence</b></td><td>Should be independent of any particular programming language (just step-by-step directions).</td><td>Portability of design.</td></tr>
+    <tr><td><b>Optimality</b> (desirable)</td><td>Among all correct algorithms, a good one minimizes resource usage (time & memory).</td><td>Efficiency in practice.</td></tr>
+  </table>
+
+  <h3>7.2 Example — Find the Maximum in a List</h3>
+  <div class="code-wrap">
+<pre><code>Step 1: Initialize max = first element
+Step 2: For each element in the list
+            If element > max
+                Update max = element
+Step 3: Return max</code></pre>
+  </div>
+
+  <div class="box exam">
+    <h4>Exam-ready Answer: What is an Algorithm?</h4>
+    <p>"An algorithm is a finite, well-defined, step-by-step procedure for solving a computational problem.
+    It must have zero or more inputs, at least one output, and must be unambiguous, finite, effective, and
+    general enough to work on all valid inputs of the problem, independent of any programming language."</p>
+  </div>
+</section>
+
+<!-- ===================== 8. ANALYSIS OF ALGORITHM ===================== -->
+<section class="section" id="analysis">
+  <h2>8. Analysis of an Algorithm</h2>
+
+  <h3>8.1 Why Analyze Algorithms?</h3>
+  <ul>
+    <li>To determine resource usage — mainly <b>time</b> and <b>space</b>.</li>
+    <li>To select the <b>most optimal algorithm</b> among several alternatives that solve the same problem.</li>
+    <li>Necessary for performance-critical applications (e.g., real-time systems).</li>
+  </ul>
+  <p>Performance analysis = estimating the time and memory requirement of an algorithm.
+  Time estimation → <b>time complexity analysis</b>. Memory estimation → <b>space complexity analysis</b>.
+  Since memory today is cheap & abundant, analysis usually defaults to <b>time complexity</b>.</p>
+
+  <h3>8.2 Space Complexity</h3>
+  <div class="box def">
+    <h4>Definition</h4>
+    <p><b>Space complexity</b> is the amount of memory space required by an algorithm during its execution.</p>
+  </div>
+  <p>Reasons we study space complexity:</p>
+  <ul>
+    <li>On multi-user systems, we may need to specify how much memory to allocate to a program.</li>
+    <li>We may want to know in advance if sufficient memory is even available to run the program.</li>
+    <li>There may be several solutions to the same problem with different memory requirements.</li>
+  </ul>
+  <h4>Components of Space used by a Program</h4>
+  <table>
+    <tr><th>Component</th><th>Description</th></tr>
+    <tr><td><b>Instruction Space</b></td><td>Space to store the compiled/executable code. This is fixed.</td></tr>
+    <tr><td><b>Data Space</b></td><td>Space to store all constants and variable values used.</td></tr>
+    <tr><td><b>Environment Space</b></td><td>Space to store information needed to resume suspended functions (e.g., recursion stack).</td></tr>
+  </table>
+
+  <h3>8.3 Time Complexity</h3>
+  <div class="box def">
+    <h4>Definition</h4>
+    <p><b>Time complexity</b> is the amount of time an algorithm needs to run to completion, expressed as a
+    function of the input size <code>n</code>.</p>
+  </div>
+  <p>Reasons we study time complexity:</p>
+  <ul>
+    <li>We may want to know in advance whether a program gives a satisfactory real-time response.</li>
+    <li>There may be multiple solutions with different time requirements — we pick the fastest.</li>
+  </ul>
+
+  <h3>8.4 Best Case, Worst Case & Average Case</h3>
+  <p>The time taken by an algorithm can depend heavily on the actual input data, not just its size. So we define
+  three cases:</p>
+  <table>
+    <tr><th>Case</th><th>Meaning</th><th>Used When</th></tr>
+    <tr><td><b>Best Case</b></td><td>Minimum time taken, for the input most "suited" to the algorithm.</td><td>Rarely useful alone — gives an overly optimistic picture.</td></tr>
+    <tr><td><b>Worst Case</b></td><td>Maximum time taken, over any input of size <code>n</code>. Gives an upper bound / absolute guarantee on running time.</td><td><b>Most commonly used</b> — guarantees the algorithm will never be slower than this.</td></tr>
+    <tr><td><b>Average Case</b></td><td>Expected time, averaged over all possible inputs of size <code>n</code> (needs probability theory).</td><td>Useful if a certain input pattern repeats often in practice.</td></tr>
+  </table>
+  <div class="box tip">
+    <h4>Worst case vs Average case</h4>
+    <p><b>Worst-case complexity</b> provides an absolute guarantee for how long a program will run — it is the
+    longest possible time for any input of size n. <b>Average-case complexity</b> is suitable when a particular
+    pattern of input repeats often, or when occasionally running slow is acceptable. Average-case analysis
+    usually requires probability theory, so worst-case is far more commonly reported.</p>
+  </div>
+
+  <h3>8.5 Example in Linear Search</h3>
+  <table>
+    <tr><th>Case</th><th>Scenario</th><th>Comparisons</th></tr>
+    <tr><td>Best Case</td><td>Searched value is the very first element</td><td>1</td></tr>
+    <tr><td>Worst Case</td><td>Value is the last element, or not present at all</td><td>n</td></tr>
+    <tr><td>Average Case</td><td>Value found somewhere in the middle (on average)</td><td>~n/2</td></tr>
+  </table>
+</section>
+
+<!-- ===================== 9. TIME-SPACE TRADEOFF ===================== -->
+<section class="section" id="tradeoff">
+  <h2>9. Time–Space Trade-off</h2>
+
+  <div class="box def">
+    <h4>Definition</h4>
+    <p>The <b>Time–Space Trade-off</b> is a fundamental concept describing the relationship between an
+    algorithm's execution time and its memory usage: it is a technique in which we <b>increase memory usage to
+    reduce execution time</b>, OR <b>reduce memory usage at the cost of increased execution time</b>.</p>
+  </div>
+
+  <p>An algorithm can often be made <b>faster</b> by using more memory (e.g., pre-computed lookup tables, hash
+  tables), or made to use <b>less memory</b> by doing more computation each time (recomputing instead of
+  storing). A single problem may have several correct implementations that differ purely in this trade-off.</p>
+
+  <h3>9.1 Real-life Analogy</h3>
+  <div class="box tip">
+    <p><b>Remembering 100 phone numbers:</b></p>
+    <p><b>Method 1:</b> Memorize nothing; look up each number in a directory every time → takes more time, uses
+    less memory.</p>
+    <p><b>Method 2:</b> Store all numbers in your phone's contact list → uses memory, but gives instant (quick)
+    access.</p>
+  </div>
+
+  <h3>9.2 Factors Guiding the Choice</h3>
+  <ul>
+    <li>Available memory</li>
+    <li>Required execution speed</li>
+    <li>Input size</li>
+    <li>Frequency of the operation</li>
+    <li>Hardware constraints</li>
+    <li>Application requirements</li>
+  </ul>
+
+  <h3>9.3 Why It Matters</h3>
+  <p>Real systems have <b>limited resources</b>. An algorithm that is fast but uses excessive memory may not fit
+  a memory-constrained device; an algorithm that uses very little memory but is too slow may fail in a
+  real-time application. The designer must balance:</p>
+  <ul>
+    <li>Reducing execution time</li>
+    <li>Optimizing memory utilization</li>
+    <li>Improving overall system performance</li>
+    <li>Choosing the right data structure for the job</li>
+  </ul>
+
+  <h3>9.4 Practical Example — Searching a Roll Number Repeatedly</h3>
+  <table>
+    <tr><th>Approach</th><th>Time</th><th>Additional Space</th></tr>
+    <tr><td>Linear Search</td><td>O(n) per search</td><td>O(1)</td></tr>
+    <tr><td>Hash Table</td><td>Average O(1) per search</td><td>O(n)</td></tr>
+    <tr><td>Sorted Array + Binary Search</td><td>O(log n) per search</td><td>Depends on storage (sorting cost)</td></tr>
+  </table>
+  <p>Notice: the hash table trades extra memory for much faster average search time — a classic time–space trade-off.</p>
+
+  <div class="box exam">
+    <h4>Exam-ready Answer: Explain Time–Space Trade-off</h4>
+    <p>"Time–space trade-off is a principle in algorithm design stating that the running time of an algorithm
+    can often be reduced by using additional memory, and conversely, memory usage can be reduced by performing
+    extra computation (increasing time). Since real systems have limited memory and require fast responses,
+    algorithm designers must balance these two resources based on the application's needs, hardware
+    constraints, and how frequently an operation is performed. Example: storing pre-computed results (more
+    memory, less time) vs recomputing them every time (less memory, more time)."</p>
+  </div>
+</section>
+
+<!-- ===================== 10. ASYMPTOTIC NOTATIONS ===================== -->
+<section class="section" id="asymptotic">
+  <h2>10. Asymptotic Notations</h2>
+
+  <h3>10.1 Why We Need Them</h3>
+  <p>The order of growth of an algorithm's running time gives a simple way to characterise its efficiency and
+  compare it with alternatives. For <b>large enough inputs</b>, the multiplicative constants and lower-order
+  terms of the exact running time become insignificant — only the highest-order term matters. So we describe
+  running time using <b>asymptotic notation</b>, which captures how the running time grows as input size
+  <code>n → ∞</code>, ignoring constants and lower-order terms.</p>
+
+  <div class="box def">
+    <h4>What is Asymptotic Analysis?</h4>
+    <p>Studying how the running time of an algorithm increases with the input size <i>in the limit</i>, as the
+    input size grows without bound — focusing purely on the <b>rate of growth</b>, not exact step counts.</p>
+  </div>
+
+  <p>There are five standard notations: <b>O (Big-Oh)</b>, <b>Ω (Big-Omega)</b>, <b>Θ (Big-Theta)</b>,
+  <b>o (little-oh)</b>, and <b>ω (little-omega)</b>. Each describes a different rate-of-growth relationship
+  between a function <code>f(n)</code> (actual running time) and a reference function <code>g(n)</code>.</p>
+
+  <h3>10.2 Big-O Notation — Upper Bound <span class="badge o">Worst Case</span></h3>
+  <div class="box def">
+    <h4>Formal Definition</h4>
+    <p><code>O(g(n)) = { f(n) : there exist positive constants c and n₀ such that
+    0 ≤ f(n) ≤ c·g(n) for all n ≥ n₀ }</code></p>
+  </div>
+  <p><b>Meaning:</b> <code>g(n)</code> is an <b>asymptotic upper bound</b> for <code>f(n)</code> — <code>f(n)</code>
+  grows <i>no faster than</i> <code>g(n)</code> (within a constant factor), for large n.
+  Intuitively: the set of all functions whose growth rate is the same as or lower than <code>g(n)</code>.</p>
+  <p><b>Big-O gives the worst-case complexity</b> of an algorithm — it is the most commonly used notation.</p>
+
+  <details>
+    <summary>📊 Diagram — Big-O (visual idea)</summary>
+    <div class="inner">
+      <p>Imagine plotting <code>f(n)</code> and <code>c·g(n)</code> on a graph. Beyond some point <code>n₀</code>,
+      the curve of <code>f(n)</code> always stays <b>below or touching</b> <code>c·g(n)</code>. That region
+      below the line is the "O(g(n))" zone.</p>
+      <pre><code>      c·g(n)  ______________↗
+                        ____/
+      f(n)      _______/
+            ____/
+      ______/
+      ───────────┼──────────────────► n
+                 n₀</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>✏️ Worked Example 1 — Any linear function an+b is O(n²)</summary>
+    <div class="inner">
+      <p>We need c, n₀ such that <code>an + b ≤ c·n²</code> for all n ≥ n₀. Since for n ≥ 1,
+      <code>an + b ≤ (a+b)n ≤ (a+b)n²</code>, choosing <code>c = a+b</code> and <code>n₀ = 1</code> works.
+      Hence <code>an+b = O(n²)</code>.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✏️ Worked Example 2 — Show 3n³ = O(n⁴)</summary>
+    <div class="inner">
+      <p>We need <code>3n³ ≤ c·n⁴</code> for n ≥ n₀. Dividing both sides by n³ (n>0):
+      <code>3 ≤ c·n</code>. Choosing <code>c = 1</code>, we need <code>n ≥ 3</code>.
+      So <code>n₀ = 3, c = 1</code> works → <code>3n³ = O(n⁴)</code>.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✏️ Worked Example 3 — Show 5n³+15n²+7n+36 = O(n³)</summary>
+    <div class="inner">
+      <p>Highest-order term is <code>5n³</code>. Take c = 6: Need <code>15n²+7n+36 ≤ n³</code> for large n.
+      At n = 10: LHS = 1500+70+36 = 1606; n³ = 1000 → false. Try bigger n: at n = 20, LHS = 6000+140+36=6176;
+      n³=8000 → true. So with careful choice (say n₀ = 20, c = 6) the inequality holds for all n ≥ n₀.
+      Hence the function is O(n³). (Also O(n⁴), O(n⁵)... since any higher power also upper-bounds it — but we
+      always quote the <b>tightest</b> bound.)</p>
+    </div>
+  </details>
+
+  <div class="box warn">
+    <h4>Common Misunderstanding</h4>
+    <p>The statement "f(n) = O(g(n))" does <b>not</b> mean equality — the "=" is really "∈" (belongs to a set).
+    It means f(n) is a member of the set of functions bounded above by constant multiples of g(n).
+    So it is perfectly valid (though unusual) to also write <code>3n³+5n²-9 = O(n⁴)</code>,
+    <code>n³ = O(3n³+5n²-9)</code>, even <code>sin(x) = O(x⁴)</code>. In practice we always quote only the
+    <b>most dominant (tightest)</b> term, e.g. "running time is O(n².⁵)".</p>
+  </div>
+
+  <h3>10.3 Big-Omega (Ω) Notation — Lower Bound <span class="badge omega">Best Case</span></h3>
+  <div class="box def">
+    <h4>Formal Definition</h4>
+    <p><code>Ω(g(n)) = { f(n) : there exist positive constants c and n₀ such that
+    0 ≤ c·g(n) ≤ f(n) for all n ≥ n₀ }</code></p>
+  </div>
+  <p><b>Meaning:</b> <code>g(n)</code> is an <b>asymptotic lower bound</b> for <code>f(n)</code> — <code>f(n)</code>
+  grows <i>at least as fast</i> as <code>g(n)</code>. Intuitively: set of all functions whose growth rate is the
+  same as or higher than <code>g(n)</code>. <b>Ω gives the best-case complexity</b> of an algorithm.</p>
+  <p><b>Example:</b> Since the highest-order term of <code>5n³+15n²+7n+36</code> grows at least as fast as
+  <code>n³</code>, this function is <code>Ω(n³)</code>. It is also <code>Ω(n²)</code> and <code>Ω(n)</code>.</p>
+
+  <details>
+    <summary>✏️ Worked Example — Show √n = Ω(log n)</summary>
+    <div class="inner">
+      <p>We need c, n₀ such that <code>c·log n ≤ √n</code> for n ≥ n₀. Since <code>√n</code> grows faster than
+      <code>log n</code> for large n, choosing <code>c = 1</code> and testing values (e.g. n₀ = 16: log₂16 = 4,
+      √16 = 4 → equal; for n > 16, √n grows faster), the inequality holds. So <code>√n = Ω(log n)</code>.</p>
+    </div>
+  </details>
+
+  <h3>10.4 Big-Theta (Θ) Notation — Tight Bound <span class="badge theta">Average/Exact</span></h3>
+  <div class="box def">
+    <h4>Formal Definition</h4>
+    <p><code>Θ(g(n)) = { f(n) : there exist positive constants c₁, c₂, and n₀ such that
+    0 ≤ c₁·g(n) ≤ f(n) ≤ c₂·g(n) for all n ≥ n₀ }</code></p>
+  </div>
+  <p><b>Meaning:</b> <code>g(n)</code> is an <b>asymptotically tight bound</b> for <code>f(n)</code> — the
+  function is "sandwiched" between <code>c₁g(n)</code> and <code>c₂g(n)</code>. Intuitively: the set of all
+  functions with exactly the <b>same rate of growth</b> as <code>g(n)</code>.</p>
+
+  <div class="box def">
+    <h4>Theorem (very important for exams)</h4>
+    <p>For any two functions <code>f(n)</code> and <code>g(n)</code>:
+    <br><b>f(n) = Θ(g(n)) &nbsp; if and only if &nbsp; f(n) = O(g(n)) AND f(n) = Ω(g(n))</b></p>
+    <p>i.e. <code>Θ(g(n)) = O(g(n)) ∩ Ω(g(n))</code>. In practice, a tight bound is obtained by proving both the
+    upper and lower bounds separately.</p>
+  </div>
+
+  <details>
+    <summary>✏️ Worked Example — Show 10n²-3n = Θ(n²)</summary>
+    <div class="inner">
+      <p><b>Upper bound:</b> <code>10n²-3n ≤ 10n²</code> trivially (since -3n &lt; 0) → so <code>c₂ = 10</code> works for all n.</p>
+      <p><b>Lower bound:</b> Need <code>c₁n² ≤ 10n²-3n</code> ⟹ <code>(10-c₁)n ≥ 3</code>. Take <code>c₁ = 9</code>:
+      need <code>n ≥ 3</code>.</p>
+      <p>So with <code>c₁=9, c₂=10, n₀=3</code>: <code>9n² ≤ 10n²-3n ≤ 10n²</code> holds for all n ≥ 3.
+      Hence <code>10n²-3n = Θ(n²)</code>. (Rule of thumb: make c₁ slightly smaller and c₂ slightly larger than
+      the leading coefficient.)</p>
+    </div>
+  </details>
+
+  <h3>10.5 Little-o Notation — Loose Upper Bound</h3>
+  <div class="box def">
+    <h4>Formal Definition</h4>
+    <p><code>o(g(n)) = { f(n) : for all positive constants c, there exists a positive constant n₀ such that
+    0 ≤ f(n) &lt; c·g(n) for all n ≥ n₀ }</code></p>
+  </div>
+  <p>Unlike Big-O, little-o describes a bound that is <b>never tight</b> — f(n) becomes insignificant compared to
+  g(n) as n grows. To check if <code>f(n) = o(g(n))</code>, compute:
+  <code>lim<sub>n→∞</sub> f(n)/g(n)</code>. If this limit <b>= 0</b>, then <code>f(n) = o(g(n))</code>.</p>
+
+  <h3>10.6 Little-omega (ω) Notation — Loose Lower Bound</h3>
+  <div class="box def">
+    <h4>Formal Definition</h4>
+    <p><code>ω(g(n)) = { f(n) : for all positive constants c, there exists a positive constant n₀ such that
+    0 ≤ c·g(n) &lt; f(n) for all n ≥ n₀ }</code></p>
+  </div>
+  <p>To check if <code>f(n) = ω(g(n))</code>, compute <code>lim<sub>n→∞</sub> f(n)/g(n)</code>.
+  If this limit <b>= ∞</b>, then <code>f(n) = ω(g(n))</code>.</p>
+
+  <h3>10.7 Summary Table of All Five Notations</h3>
+  <table>
+    <tr><th>Notation</th><th>Bound Type</th><th>Meaning</th><th>Relates to Algorithm's</th></tr>
+    <tr><td><b>O (Big-Oh)</b></td><td>Upper bound (may be tight)</td><td>f(n) grows no faster than g(n)</td><td>Worst case</td></tr>
+    <tr><td><b>Ω (Big-Omega)</b></td><td>Lower bound (may be tight)</td><td>f(n) grows at least as fast as g(n)</td><td>Best case</td></tr>
+    <tr><td><b>Θ (Big-Theta)</b></td><td>Tight bound (both sides)</td><td>f(n) grows exactly as fast as g(n)</td><td>Average / exact</td></tr>
+    <tr><td><b>o (little-oh)</b></td><td>Strict/loose upper bound</td><td>f(n) grows strictly slower than g(n)</td><td>Used for comparisons</td></tr>
+    <tr><td><b>ω (little-omega)</b></td><td>Strict/loose lower bound</td><td>f(n) grows strictly faster than g(n)</td><td>Used for comparisons</td></tr>
+  </table>
+
+  <details>
+    <summary>📊 Diagram — Relation between Θ, O, Ω</summary>
+    <div class="inner">
+      <pre><code>  Θ(g(n))                O(g(n))              Ω(g(n))
+  c2·g(n) ----             c·g(n)  ----          f(n)  ----
+     f(n)  ----\                f(n) ----\         c·g(n) ----\
+  c1·g(n) ----\ \                    \ \                \ \
+          (sandwiched           (f stays below      (f stays above
+           both sides)            c·g(n))              c·g(n))</code></pre>
+      <p><b>Θ</b> = tight sandwich from both sides. <b>O</b> = only an upper ceiling. <b>Ω</b> = only a lower floor.</p>
+    </div>
+  </details>
+
+  <h3>10.8 Useful Limit-based Shortcuts</h3>
+  <p>To compare growth rates of f(n) and g(n), evaluate <code>lim<sub>n→∞</sub> f(n)/g(n)</code>:</p>
+  <table>
+    <tr><th>Limit value</th><th>Conclusion</th></tr>
+    <tr><td>0</td><td>f(n) = o(g(n)) &nbsp;(also O(g(n)))</td></tr>
+    <tr><td>Finite, non-zero constant</td><td>f(n) = Θ(g(n))</td></tr>
+    <tr><td>∞</td><td>f(n) = ω(g(n)) &nbsp;(also Ω(g(n)))</td></tr>
+  </table>
+  <details>
+    <summary>✏️ Verified Examples using Limits</summary>
+    <div class="inner">
+      <table>
+        <tr><th>Comparison</th><th>Limit</th><th>Conclusion</th></tr>
+        <tr><td>√n vs n</td><td>lim √n/n = 0</td><td>√n is O(n)</td></tr>
+        <tr><td>n vs √n</td><td>lim n/√n = ∞</td><td>n is NOT O(√n)</td></tr>
+        <tr><td>n vs 2ⁿ (exp.)</td><td>lim n/2ⁿ = 0</td><td>n is O(2ⁿ)</td></tr>
+        <tr><td>ln(n) vs n</td><td>lim ln(n)/n = 0</td><td>ln(n) is O(n)</td></tr>
+        <tr><td>n+√n vs n</td><td>lim (n+√n)/n = 1</td><td>n+√n is O(n) (and Θ(n))</td></tr>
+        <tr><td>n+n² vs n</td><td>lim (n+n²)/n = ∞</td><td>n+n² is NOT O(n)</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <h3>10.9 Big-O Algebra (Combining Functions)</h3>
+  <table>
+    <tr><th>Rule</th><th>Statement</th></tr>
+    <tr><td>Sum Rule</td><td>If f₁ = O(g₁) and f₂ = O(g₂), then f₁+f₂ = O(max(g₁,g₂)). In particular, if f₁ ≤ f₂ eventually, then f₁+f₂ = O(f₂).</td></tr>
+    <tr><td>Product Rule</td><td>If f₁ = O(g₁) and f₂ = O(g₂), then f₁·f₂ = O(g₁·g₂).</td></tr>
+  </table>
+  <details>
+    <summary>✏️ Example using Sum Rule</summary>
+    <div class="inner"><p><code>27·log(n) + 19 + n = O(n)</code>, because the <code>n</code> term dominates <code>27·log(n)+19</code> for large n.</p></div>
+  </details>
+
+  <div class="box exam">
+    <h4>Exam-ready Answer: Difference between O, Ω and Θ</h4>
+    <p>"Big-O notation gives the asymptotic <b>upper bound</b> on an algorithm's running time, representing the
+    <b>worst-case</b> complexity. Big-Omega gives the asymptotic <b>lower bound</b>, representing the
+    <b>best-case</b> complexity. Big-Theta gives a <b>tight bound</b> — it exists only when the upper bound
+    (O) and lower bound (Ω) coincide asymptotically, representing the algorithm's exact/average growth rate.
+    Formally, f(n)=Θ(g(n)) if and only if f(n)=O(g(n)) and f(n)=Ω(g(n))."</p>
+  </div>
+</section>
+
+<!-- ===================== 11. COMPLEXITY EXAMPLES ===================== -->
+<section class="section" id="complexity-eg">
+  <h2>11. Worked Complexity Examples (Code → Big-O)</h2>
+  <p>Below are representative code patterns you must be able to recognise instantly in an exam, with the
+  reasoning behind each complexity.</p>
+
+  <details>
+    <summary>① Single loop → O(n)</summary>
+    <div class="inner">
+<pre><code>for(i=1;i<=n;i++)
+    printf("Himanshu");</code></pre>
+      <p>The loop runs exactly <code>n</code> times → <b>O(n)</b> — linear time.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>② Nested loop (both to n) → O(n²)</summary>
+    <div class="inner">
+<pre><code>for(i=1;i<=n;i++)
+    for(j=1;j<=n;j++)
+        printf("Himanshu");</code></pre>
+      <p>Inner loop runs n times for each of the n outer iterations → n × n = <b>O(n²)</b> — quadratic time.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>③ Dependent nested loop (triangular) → O(n²)</summary>
+    <div class="inner">
+<pre><code>for(i=1;i<=n;i++)
+    for(j=1;j<=i;j++)
+        for(k=1;k<=100;k++)
+            printf("Himanshu");</code></pre>
+      <p>Number of (i,j) pairs = 1+2+...+n = n(n+1)/2 ≈ O(n²). The innermost loop runs a <b>constant</b> 100
+      times (doesn't depend on n), so it doesn't change the order → total = <b>O(n²)</b>.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>④ Increment doubles each time → O(log₂n)</summary>
+    <div class="inner">
+<pre><code>for(i=1;i<=n;i=i*2)
+    printf("Himanshu");</code></pre>
+      <p>i takes values 1,2,4,8,...,2^k. Loop ends when 2^k > n ⟹ k ≈ log₂n. So it runs <b>O(log₂n)</b> times —
+      logarithmic time. (Same logic applies to <code>while(n>1){ n=n/2; }</code> — each step halves n.)</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑤ Loop bound is a root → O(√n)</summary>
+    <div class="inner">
+<pre><code>for(i=1; i*i<=n; i++)
+    printf("Himanshu");</code></pre>
+      <p>The loop runs while <code>i² ≤ n</code>, i.e. until <code>i ≈ √n</code> → <b>O(√n)</b>.</p>
+      <p><b>GATE-style variant:</b>
+<pre style="margin-top:8px"><code>i=1; s=1;
+while(s<=n){ i++; s=s+i; }</code></pre>
+      Here s after k steps ≈ sum 1..k ≈ k²/2. Setting k²/2 ≈ n gives k ≈ √(2n) → still <b>O(√n)</b>.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑥ Loop increases additively using outer index → O(n log n)</summary>
+    <div class="inner">
+<pre><code>for(i=1;i<=n;i++)
+    for(j=1;j<=n;j=j+i)
+        printf("Himanshu");</code></pre>
+      <p>For a fixed i, inner loop runs about n/i times. Summing over all i: n/1+n/2+...+n/n = n·(1+1/2+...+1/n)
+      = n·H(n) ≈ <b>O(n log n)</b> (harmonic series H(n) ≈ ln n).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑦ Exponential growth → O(2ⁿ)</summary>
+    <div class="inner">
+<pre><code>for (i = 0; i < (1<<n); i++)   // 1<<n means 2^n
+    result += i;</code></pre>
+      <p>Loop runs <code>2ⁿ</code> times → <b>O(2ⁿ)</b> — exponential time (very slow for even moderate n).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑧ Recursive Factorial → O(n)</summary>
+    <div class="inner">
+<pre><code>int Factorial(int n){
+    if (n==0) return 1;
+    else return n * Factorial(n-1);
+}</code></pre>
+      <p>Makes exactly n recursive calls before hitting the base case → <b>O(n)</b> time, and O(n) space due to
+      the recursion (call) stack.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑨ Naive recursive Fibonacci → O(2ⁿ)</summary>
+    <div class="inner">
+<pre><code>int Fibonacci(int n){
+    if (n==0 || n==1) return 1;
+    return Fibonacci(n-1) + Fibonacci(n-2);
+}</code></pre>
+      <p>Each call branches into 2 more calls, forming a binary recursion tree of depth n → number of calls grows
+      exponentially, exactly following the Fibonacci sequence's own growth, approximated as <b>O(2ⁿ)</b>.
+      (A classic example of why naive recursion can be disastrously slow — motivates dynamic programming,
+      covered in later units.)</p>
+    </div>
+  </details>
+
+  <h3>11.1 Time Complexity of Familiar Tasks (Reference Table)</h3>
+  <table>
+    <tr><th>Task</th><th>Growth Rate</th></tr>
+    <tr><td>Getting a specific element from an array (by index)</td><td>O(1)</td></tr>
+    <tr><td>Repeatedly halving a list (e.g. recursion tree depth)</td><td>O(log₂n)</td></tr>
+    <tr><td>Binary Search</td><td>O(log₂n)</td></tr>
+    <tr><td>Linear / brute-force search of a list</td><td>O(n)</td></tr>
+    <tr><td>Merge Sort</td><td>O(n log₂n)</td></tr>
+    <tr><td>Nested loops, k levels deep</td><td>O(nᵏ)</td></tr>
+    <tr><td>Matrix × Vector multiply, Bubble Sort</td><td>O(n²)</td></tr>
+    <tr><td>Generate all subsets of a set</td><td>O(2ⁿ)</td></tr>
+    <tr><td>Generate all permutations of a set</td><td>O(n!)</td></tr>
+  </table>
+
+  <h3>11.2 Order of Growth (Slowest to Fastest growing)</h3>
+  <div class="box tip">
+    <p><code>O(1) &lt; O(log n) &lt; O(√n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(n³) &lt; O(2ⁿ) &lt; O(n!)</code></p>
+  </div>
+</section>
+
+<!-- ===================== 12. SEARCHING ===================== -->
+<section class="section" id="searching">
+  <h2>12. Searching Techniques</h2>
+  <p><b>Searching</b> means finding whether a particular value (called <code>VAL</code>) is present in a
+  collection of data (e.g., an array) or not.</p>
+  <ul>
+    <li>If the value is found → search is <b>successful</b>, and we return its position (index).</li>
+    <li>If the value is not found → search is <b>unsuccessful</b>, and an appropriate message is shown.</li>
+  </ul>
+  <p>Two popular searching methods are studied in this unit: <b>Linear Search</b> and <b>Binary Search</b>.
+  The right one to use depends entirely on how the data is organized (sorted or unsorted).</p>
+
+  <!-- LINEAR SEARCH -->
+  <h3 id="linear-search">12.1 Linear Search (Sequential Search)</h3>
+
+  <div class="box def">
+    <h4>Concept</h4>
+    <p>Linear Search is the simplest searching method. It compares the search value (<code>VAL</code>) with
+    <b>every element of the array, one by one, in sequence</b>, until a match is found or the array ends.
+    It is mostly used on an <b>unordered (unsorted) list</b>, since it makes no assumption about the order of data.</p>
+  </div>
+
+  <h4>How it Works — Step by Step</h4>
+  <ol>
+    <li>Start from the first element of the array.</li>
+    <li>Compare the current element with <code>VAL</code>.</li>
+    <li>If they match → search successful, return the position.</li>
+    <li>If not, move to the next element and repeat.</li>
+    <li>If the end of the array is reached without a match → search unsuccessful.</li>
+  </ol>
+
+  <h4>Algorithm (Pseudocode)</h4>
+  <div class="code-wrap">
+<pre><code>LINEAR_SEARCH(A, N, VAL)
+Step 1: [INITIALIZE] SET POS = -1
+Step 2: [INITIALIZE] SET I = 1
+Step 3: Repeat Step 4 while I <= N
+Step 4:     IF A[I] = VAL
+                SET POS = I
+                PRINT POS
+                Go to Step 6
+            [END OF IF]
+            SET I = I + 1
+        [END OF LOOP]
+Step 5: IF POS = -1
+            PRINT "VALUE IS NOT PRESENT IN THE ARRAY"
+        [END OF IF]
+Step 6: EXIT</code></pre>
+  </div>
+
+  <h4>Example & Dry Run</h4>
+  <p>Array: <code>A[] = {10, 8, 2, 7, 3, 4, 9, 1, 6, 5}</code>, search <code>VAL = 7</code> (0-indexed in C).</p>
+  <div class="steps">
+    <div class="step"><b>Check A[0]=10:</b> 10 ≠ 7 → move on</div>
+    <div class="step"><b>Check A[1]=8:</b> 8 ≠ 7 → move on</div>
+    <div class="step"><b>Check A[2]=2:</b> 2 ≠ 7 → move on</div>
+    <div class="step"><b>Check A[3]=7:</b> 7 = 7 → ✅ Match found! <code>POS = 3</code></div>
+  </div>
+  <p>Result: <b>Search successful</b>, value found at index 3 (4 comparisons made).</p>
+
+  <details>
+    <summary>Dry Run Table (full trace)</summary>
+    <div class="inner">
+      <table>
+        <tr><th>Step (I)</th><th>A[I]</th><th>A[I]==VAL(7)?</th><th>Action</th></tr>
+        <tr><td>1</td><td>10</td><td>No</td><td>I++</td></tr>
+        <tr><td>2</td><td>8</td><td>No</td><td>I++</td></tr>
+        <tr><td>3</td><td>2</td><td>No</td><td>I++</td></tr>
+        <tr><td>4</td><td>7</td><td><b>Yes</b></td><td>POS=4 (1-indexed), stop</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <h4>Complexity Analysis</h4>
+  <table>
+    <tr><th>Case</th><th>Condition</th><th>Comparisons</th><th>Complexity</th></tr>
+    <tr><td>Best Case</td><td>VAL equals the first element</td><td>1</td><td>O(1)</td></tr>
+    <tr><td>Worst Case</td><td>VAL equals last element, or not present</td><td>n</td><td>O(n)</td></tr>
+    <tr><td>Average Case</td><td>VAL found somewhere in the middle (on average)</td><td>~n/2</td><td>O(n)</td></tr>
+  </table>
+  <p><b>Space Complexity:</b> O(1) — only a few extra variables (POS, I) are used, no extra data structures.</p>
+
+  <h4>C Implementation</h4>
+  <div class="code-wrap">
+<pre><code>#include &lt;stdio.h&gt;
+#define SIZE 20
+
+int main() {
+    int arr[SIZE], num, i, n, found = 0, pos = -1;
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter the elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    printf("Enter the number to search: ");
+    scanf("%d", &num);
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] == num) {
+            found = 1;
+            pos = i;
+            printf("%d found at position %d\n", num, i + 1); // +1 for 1-based display
+            break;
+        }
+    }
+
+    if (found == 0)
+        printf("%d does not exist in the array\n", num);
+
+    return 0;
+}</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <details>
+    <summary>Explanation of Key Parts of the Code</summary>
+    <div class="inner">
+      <ul>
+        <li><code>found</code> flag tracks whether the element was located; initialised to 0 (false).</li>
+        <li>A single <code>for</code> loop scans the array sequentially from index 0 to n-1.</li>
+        <li><code>break</code> exits the loop immediately once a match is found — this is what gives the
+        <b>best-case</b> speed-up (we don't keep scanning after finding the value).</li>
+        <li><code>i + 1</code> is printed purely to show position in human-friendly 1-based form.</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- BINARY SEARCH -->
+  <h3 id="binary-search">12.2 Binary Search</h3>
+
+  <div class="box def">
+    <h4>Concept</h4>
+    <p>Binary Search is an efficient algorithm that works only on a <b>sorted</b> array. It finds the desired
+    value using the minimum possible number of comparisons by repeatedly dividing the search space in half.</p>
+  </div>
+
+  <div class="box tip">
+    <h4>Dictionary Analogy</h4>
+    <p>To find a word in a dictionary, you don't start from page 1. You open it roughly in the <b>middle</b>,
+    compare the word there with your target word. If your word comes <i>before</i> it alphabetically, you search
+    only the <b>first half</b>; otherwise you search the <b>second half</b>. You repeat this halving process
+    until you find the word. This is exactly how binary search works.</p>
+  </div>
+
+  <h4>How it Works — Step by Step</h4>
+  <ol>
+    <li>Set <code>BEG</code> = first index, <code>END</code> = last index.</li>
+    <li>Compute <code>MID = (BEG + END) / 2</code>.</li>
+    <li>If <code>A[MID] == VAL</code> → found! Return MID.</li>
+    <li>If <code>A[MID] > VAL</code> → the target must be in the <b>left half</b>; set <code>END = MID - 1</code>.</li>
+    <li>If <code>A[MID] < VAL</code> → the target must be in the <b>right half</b>; set <code>BEG = MID + 1</code>.</li>
+    <li>Repeat steps 2–5 while <code>BEG ≤ END</code>. If the loop ends without a match, the value is not present.</li>
+  </ol>
+
+  <h4>Algorithm (Pseudocode)</h4>
+  <div class="code-wrap">
+<pre><code>BINARY_SEARCH(A, lower_bound, upper_bound, VAL)
+Step 1: [INITIALIZE] SET BEG = lower_bound
+                      END = upper_bound, POS = -1
+Step 2: Repeat Steps 3 and 4 while BEG <= END
+Step 3:     SET MID = (BEG + END)/2
+Step 4:     IF A[MID] = VAL
+                SET POS = MID
+                PRINT POS
+                Go to Step 6
+            ELSE IF A[MID] > VAL
+                SET END = MID - 1
+            ELSE
+                SET BEG = MID + 1
+            [END OF IF]
+        [END OF LOOP]
+Step 5: IF POS = -1
+            PRINT "VALUE IS NOT PRESENT IN THE ARRAY"
+        [END OF IF]
+Step 6: EXIT</code></pre>
+  </div>
+
+  <h4>Example & Dry Run (Successful Search)</h4>
+  <p>Sorted Array (0-indexed): <code>A[] = {3, 8, 15, 21, 29, 41, 50, 63, 72, 88}</code>, n=10, search <code>VAL = 41</code></p>
+  <div class="steps">
+    <div class="step"><b>Step 1:</b> BEG=0, END=9 → MID=(0+9)/2=4 → A[4]=29. 29 &lt; 41 → search right half → BEG=5</div>
+    <div class="step"><b>Step 2:</b> BEG=5, END=9 → MID=(5+9)/2=7 → A[7]=63. 63 &gt; 41 → search left half → END=6</div>
+    <div class="step"><b>Step 3:</b> BEG=5, END=6 → MID=(5+6)/2=5 → A[5]=41. ✅ Match! POS=5</div>
+  </div>
+  <p>Result: <b>Found in only 3 comparisons</b>, versus up to 10 for linear search on the same data!</p>
+
+  <details>
+    <summary>Dry Run — Unsuccessful Search Example</summary>
+    <div class="inner">
+      <p>Same array, search <code>VAL = 100</code>:</p>
+      <table>
+        <tr><th>Step</th><th>BEG</th><th>END</th><th>MID</th><th>A[MID]</th><th>Comparison</th><th>Action</th></tr>
+        <tr><td>1</td><td>0</td><td>9</td><td>4</td><td>29</td><td>29&lt;100</td><td>BEG=5</td></tr>
+        <tr><td>2</td><td>5</td><td>9</td><td>7</td><td>63</td><td>63&lt;100</td><td>BEG=8</td></tr>
+        <tr><td>3</td><td>8</td><td>9</td><td>8</td><td>72</td><td>72&lt;100</td><td>BEG=9</td></tr>
+        <tr><td>4</td><td>9</td><td>9</td><td>9</td><td>88</td><td>88&lt;100</td><td>BEG=10</td></tr>
+        <tr><td>—</td><td colspan="5">Now BEG(10) &gt; END(9) → loop stops</td><td><b>Not Found</b></td></tr>
+      </table>
+    </div>
+  </details>
+
+  <h4>Complexity Analysis</h4>
+  <p>With each comparison, the segment to be searched is <b>halved</b>. If it takes <code>f(n)</code>
+  comparisons to search an array of size n, then: <code>2<sup>f(n)</sup> ≥ n</code>, which gives us
+  <code>f(n) = log₂n</code>.</p>
+  <table>
+    <tr><th>Case</th><th>Complexity</th></tr>
+    <tr><td>Best Case</td><td>O(1) — target is exactly the middle element on first try</td></tr>
+    <tr><td>Worst Case</td><td>O(log₂n)</td></tr>
+    <tr><td>Average Case</td><td>O(log₂n)</td></tr>
+  </table>
+  <p><b>Space Complexity:</b> O(1) for the iterative version; O(log n) for the recursive version due to the
+  recursion call stack.</p>
+
+  <div class="box warn">
+    <h4>Important Pre-condition</h4>
+    <p>Binary Search <b>requires the array to be sorted</b> beforehand. If the data is not sorted, you must sort
+    it first (adding an extra O(n log n) sorting cost) — a classic example of time–space/time–time trade-off
+    when deciding whether binary search is worth it for a one-time search vs. repeated searches.</p>
+  </div>
+
+  <h4>C Implementation (Iterative)</h4>
+  <div class="code-wrap">
+<pre><code>#include &lt;stdio.h&gt;
+#define SIZE 10
+
+int main() {
+    int arr[SIZE], num, i, n, beg, end, mid, found = 0;
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter the SORTED elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    printf("Enter the number to search: ");
+    scanf("%d", &num);
+
+    beg = 0; end = n - 1;
+    while (beg <= end) {
+        mid = (beg + end) / 2;
+        if (arr[mid] == num) {
+            printf("%d found at position %d\n", num, mid + 1);
+            found = 1;
+            break;
+        }
+        else if (arr[mid] > num)
+            end = mid - 1;
+        else
+            beg = mid + 1;
+    }
+
+    if (!found)
+        printf("%d does not exist in the array\n", num);
+
+    return 0;
+}</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <details>
+    <summary>Alternate Implementation — Recursive Binary Search (same algorithm, recursive style)</summary>
+    <div class="inner">
+      <p>This is the exact same algorithm/logic as above, just expressed using recursion instead of a
+      <code>while</code> loop — a common alternate coding style asked in exams:</p>
+<pre><code>int binarySearchRec(int arr[], int beg, int end, int val) {
+    if (beg > end) return -1;          // base case: not found
+    int mid = (beg + end) / 2;
+    if (arr[mid] == val) return mid;   // found
+    else if (arr[mid] > val)
+        return binarySearchRec(arr, beg, mid - 1, val);  // search left half
+    else
+        return binarySearchRec(arr, mid + 1, end, val);  // search right half
+}</code></pre>
+      <p>Time complexity remains O(log n); space complexity becomes O(log n) due to the recursive call stack
+      (each call adds one frame, and there are log n calls in the worst case).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Explanation of Key Parts of the Code</summary>
+    <div class="inner">
+      <ul>
+        <li>The array <b>must be sorted</b> before applying binary search — this is the single most important
+        pre-condition.</li>
+        <li><code>mid = (beg+end)/2</code> always points to the middle of the current search range.</li>
+        <li>Depending on comparison with <code>arr[mid]</code>, either <code>beg</code> or <code>end</code> is
+        updated to shrink the search range by half each time.</li>
+        <li>Loop terminates when <code>beg &gt; end</code> — meaning the search range has become empty.</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<!-- ===================== 13. COMPARISON TABLES ===================== -->
+<section class="section" id="comparison">
+  <h2>13. Complexity Comparison Tables</h2>
+
+  <h3>13.1 Linear Search vs Binary Search</h3>
+  <table>
+    <tr><th>Feature</th><th>Linear Search</th><th>Binary Search</th></tr>
+    <tr><td>Precondition</td><td>None — works on unsorted data</td><td>Array <b>must be sorted</b></td></tr>
+    <tr><td>Approach</td><td>Sequential, one element at a time</td><td>Divide and conquer — halve the search space each time</td></tr>
+    <tr><td>Best Case</td><td>O(1)</td><td>O(1)</td></tr>
+    <tr><td>Worst Case</td><td>O(n)</td><td>O(log₂n)</td></tr>
+    <tr><td>Average Case</td><td>O(n)</td><td>O(log₂n)</td></tr>
+    <tr><td>Space Complexity</td><td>O(1)</td><td>O(1) iterative, O(log n) recursive</td></tr>
+    <tr><td>Best suited for</td><td>Small or unsorted datasets</td><td>Large, sorted datasets, repeated searches</td></tr>
+  </table>
+
+  <h3>13.2 Asymptotic Notation Summary</h3>
+  <table>
+    <tr><th>Notation</th><th>Bound</th><th>Case Represented</th><th>Definition Core Idea</th></tr>
+    <tr><td>O(g(n))</td><td>Upper</td><td>Worst case</td><td>f(n) ≤ c·g(n)</td></tr>
+    <tr><td>Ω(g(n))</td><td>Lower</td><td>Best case</td><td>f(n) ≥ c·g(n)</td></tr>
+    <tr><td>Θ(g(n))</td><td>Tight (both)</td><td>Average/exact</td><td>c₁g(n) ≤ f(n) ≤ c₂g(n)</td></tr>
+    <tr><td>o(g(n))</td><td>Strict upper</td><td>—</td><td>f(n)/g(n) → 0</td></tr>
+    <tr><td>ω(g(n))</td><td>Strict lower</td><td>—</td><td>f(n)/g(n) → ∞</td></tr>
+  </table>
+
+  <h3>13.3 Time vs Space Complexity Approaches (revisited)</h3>
+  <table>
+    <tr><th>Approach</th><th>Time</th><th>Additional Space</th></tr>
+    <tr><td>Linear search</td><td>O(n) per search</td><td>O(1)</td></tr>
+    <tr><td>Hash table</td><td>Average O(1) per search</td><td>O(n)</td></tr>
+    <tr><td>Sorted array + binary search</td><td>O(log n) per search</td><td>Depends on storage</td></tr>
+  </table>
+
+  <h3>13.4 Complexity Classes at a Glance</h3>
+  <table>
+    <tr><th>Big-O</th><th>Name</th><th>Example Algorithm</th></tr>
+    <tr><td>O(1)</td><td>Constant</td><td>Array index access</td></tr>
+    <tr><td>O(log n)</td><td>Logarithmic</td><td>Binary Search</td></tr>
+    <tr><td>O(√n)</td><td>Root</td><td>Certain loop-doubling patterns</td></tr>
+    <tr><td>O(n)</td><td>Linear</td><td>Linear Search</td></tr>
+    <tr><td>O(n log n)</td><td>Log-linear</td><td>Merge Sort</td></tr>
+    <tr><td>O(n²)</td><td>Quadratic</td><td>Bubble Sort, nested loops</td></tr>
+    <tr><td>O(n³)</td><td>Cubic</td><td>Triple nested loops</td></tr>
+    <tr><td>O(2ⁿ)</td><td>Exponential</td><td>Naive recursive Fibonacci, subset generation</td></tr>
+    <tr><td>O(n!)</td><td>Factorial</td><td>Generating all permutations</td></tr>
+  </table>
+</section>
+
+<!-- ===================== 14. QUICK REVISION ===================== -->
+<section class="section" id="revision">
+  <h2>14. Section-wise Quick Revision</h2>
+
+  <details>
+    <summary>Revise: Data & Data Structures</summary>
+    <div class="inner">
+      <ul>
+        <li>Data type = domain of values + set of operations.</li>
+        <li>Simple/atomic types have no components; structured types can be broken into fields.</li>
+        <li>Data structure = organized way of storing data + operations permitted on it.</li>
+        <li>Classified as Linear (Array, Stack, Queue, Linked List) vs Non-Linear (Tree, Graph, Heap, Hash Table).</li>
+        <li>Also classified as Homogeneous (Array) vs Non-Homogeneous (Structure, Class).</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Revise: ADT</summary>
+    <div class="inner">
+      <ul>
+        <li>ADT = mathematical model + operations, with implementation hidden.</li>
+        <li>Specification (what) is separate from Implementation (how).</li>
+        <li>Users only need the specification; implementers need everything.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Revise: Algorithm & Analysis</summary>
+    <div class="inner">
+      <ul>
+        <li>Algorithm = finite, unambiguous, effective sequence of steps with input/output.</li>
+        <li>Characteristics: Input, Output, Definiteness, Finiteness, Effectiveness, Generality, Independence, Optimality.</li>
+        <li>Time complexity = running time as function of n; Space complexity = memory as function of n.</li>
+        <li>Best/Worst/Average case; Worst case gives an upper-bound guarantee, most commonly used.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Revise: Time–Space Trade-off</summary>
+    <div class="inner">
+      <ul>
+        <li>Increasing memory can reduce time, and vice versa.</li>
+        <li>Choice depends on available memory, speed needs, frequency of operation, hardware.</li>
+        <li>Example: hash table (more memory, O(1) avg search) vs linear search (less memory, O(n) search).</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Revise: Asymptotic Notations</summary>
+    <div class="inner">
+      <ul>
+        <li><b>O</b> = upper bound (worst case); <b>Ω</b> = lower bound (best case); <b>Θ</b> = tight bound.</li>
+        <li><b>o</b> and <b>ω</b> are strict (non-tight) versions of O and Ω respectively.</li>
+        <li>f(n)=Θ(g(n)) iff f(n)=O(g(n)) AND f(n)=Ω(g(n)).</li>
+        <li>Use limits: lim f/g = 0 → o; finite constant → Θ; ∞ → ω.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Revise: Searching</summary>
+    <div class="inner">
+      <ul>
+        <li>Linear Search: sequential comparison, works on unsorted data, O(n) worst case.</li>
+        <li>Binary Search: needs sorted data, halves search space each time, O(log n) worst case.</li>
+        <li>Binary search formula: number of comparisons f(n) satisfies 2^f(n) ≥ n ⟹ f(n)=log₂n.</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<!-- ===================== 15. SUMMARY ===================== -->
+<section class="section" id="summary">
+  <h2>15. Complete Unit Summary</h2>
+  <p>Unit 1 lays the groundwork of DSA in three big pieces:</p>
+  <div class="grid2">
+    <div class="box def">
+      <h4>Part A — Foundations</h4>
+      <p>Data is organized into <b>data types</b> and <b>data structures</b>. Structures may be
+      <b>linear</b> (Array, Stack, Queue, Linked List) or <b>non-linear</b> (Tree, Graph, Heap, Hash Table), and
+      <b>homogeneous</b> (Array) or <b>non-homogeneous</b> (Structure/Class). An <b>Abstract Data Type (ADT)</b>
+      separates <i>what</i> a structure does (specification) from <i>how</i> it's built (implementation).
+      Standard operations on any structure: Traversal, Insertion, Deletion, Searching, Sorting, Merging.</p>
+    </div>
+    <div class="box def">
+      <h4>Part B — Measuring Efficiency</h4>
+      <p>An <b>algorithm</b> is a finite, unambiguous sequence of steps. We measure its <b>efficiency</b> using
+      <b>time complexity</b> and <b>space complexity</b>, evaluated in <b>best, worst (most common), and average</b>
+      cases. The <b>Time–Space Trade-off</b> reminds us that saving time often costs memory, and vice versa.
+      <b>Asymptotic notations</b> (O, Ω, Θ, o, ω) let us describe growth rate cleanly, ignoring constants —
+      O=worst-case upper bound, Ω=best-case lower bound, Θ=tight bound.</p>
+    </div>
+  </div>
+  <div class="box exam" style="margin-top:20px;">
+    <h4>Part C — Applying It: Searching</h4>
+    <p><b>Linear Search</b> checks elements one by one — simple, works on unsorted data, O(n) worst case.
+    <b>Binary Search</b> repeatedly halves a sorted array to find a value in O(log n) — dramatically faster for
+    large datasets, but requires the pre-condition that the data is sorted. Together, these two algorithms are
+    the simplest real demonstration of how asymptotic analysis and algorithm design directly translate into
+    performance differences.</p>
+  </div>
+</section>
+
+<!-- ===================== 16. CHEAT SHEET ===================== -->
+<section class="section" id="cheatsheet">
+  <h2>16. One-Page Last-Minute Revision Sheet</h2>
+  <div class="last-min">
+    <h4>🔑 Definitions</h4>
+    <p><b>Data Structure:</b> way of organizing data + permitted operations. &nbsp;|&nbsp;
+    <b>Algorithm:</b> finite, unambiguous sequence of steps solving a problem. &nbsp;|&nbsp;
+    <b>ADT:</b> model defined by behaviour, implementation hidden.</p>
+
+    <h4>🔑 Classification</h4>
+    <p>Linear: Array, Stack, Queue, Linked List &nbsp;|&nbsp; Non-Linear: Tree, Graph, Heap, Hash Table &nbsp;|&nbsp;
+    Homogeneous: Array &nbsp;|&nbsp; Non-Homogeneous: Struct/Class</p>
+
+    <h4>🔑 Operations</h4>
+    <p>Traversal · Insertion · Deletion · Searching · Sorting · Merging</p>
+
+    <h4>🔑 Algorithm Characteristics</h4>
+    <p>Input · Output · Definiteness · Finiteness · Effectiveness · Generality · Independence · Optimality</p>
+
+    <h4>🔑 Complexity Cases</h4>
+    <p>Best case = min time (friendly input) &nbsp;|&nbsp; Worst case = max time (guarantee, most used) &nbsp;|&nbsp;
+    Average case = expected time (needs probability)</p>
+
+    <h4>🔑 Asymptotic Notations</h4>
+    <p><b>O(g)</b>: 0≤f(n)≤c·g(n), n≥n₀ → <i>upper bound/worst case</i><br>
+    <b>Ω(g)</b>: 0≤c·g(n)≤f(n), n≥n₀ → <i>lower bound/best case</i><br>
+    <b>Θ(g)</b>: c₁g(n)≤f(n)≤c₂g(n) → <i>tight bound</i><br>
+    <b>o(g)</b>: lim f/g = 0 → <i>strict upper</i> &nbsp;&nbsp; <b>ω(g)</b>: lim f/g = ∞ → <i>strict lower</i><br>
+    Theorem: f=Θ(g) ⟺ f=O(g) AND f=Ω(g)</p>
+
+    <h4>🔑 Growth Order (slow → fast)</h4>
+    <p>O(1) &lt; O(log n) &lt; O(√n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(n³) &lt; O(2ⁿ) &lt; O(n!)</p>
+
+    <h4>🔑 Time–Space Trade-off</h4>
+    <p>↑ Memory → ↓ Time (e.g. hash tables), or ↓ Memory → ↑ Time (e.g. recompute instead of store).</p>
+
+    <h4>🔑 Linear Search</h4>
+    <p>Sequential comparison; unsorted OK; Best O(1), Worst/Avg O(n); Space O(1).</p>
+
+    <h4>🔑 Binary Search</h4>
+    <p>Needs sorted array; halves range each step; MID=(BEG+END)/2; Best O(1), Worst/Avg O(log₂n); Space O(1) iterative.
+    Comparisons f(n) satisfy 2^f(n) ≥ n ⟹ f(n)=log₂n.</p>
+  </div>
+</section>
+
+<!-- ===================== 17. FLASHCARDS ===================== -->
+<section class="section" id="flashcards">
+  <h2>17. Interactive Flashcards</h2>
+  <p>Click a card to flip and reveal the answer.</p>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ===================== 18. PRACTICE QUESTIONS ===================== -->
+<section class="section" id="questions">
+  <h2>18. Important Practice Questions</h2>
+
+  <h3>A. Definition-based</h3>
+  <details><summary>Q1. Define Data Structure. What are its types?</summary>
+    <div class="inner"><p>A data structure is a way of organizing data in memory so it can be used efficiently,
+    along with the set of operations permitted on it. Types: Linear (Array, Stack, Queue, Linked List) and
+    Non-Linear (Tree, Graph, Hash Table, Heap); also classified as Homogeneous (Array) and Non-Homogeneous
+    (Structure/Class).</p></div>
+  </details>
+  <details><summary>Q2. What is an Abstract Data Type? Give an example.</summary>
+    <div class="inner"><p>An ADT is a mathematical model of a data type defined only by its allowed values and
+    operations, with implementation details hidden. Example: A Stack ADT defines push(), pop(), peek(),
+    isEmpty() without specifying array or linked-list implementation.</p></div>
+  </details>
+  <details><summary>Q3. List the characteristics of a good algorithm.</summary>
+    <div class="inner"><p>Input, Output, Definiteness (unambiguous), Finiteness, Effectiveness/Feasibility,
+    Generality, Independence from language, and (desirably) Optimality.</p></div>
+  </details>
+
+  <h3>B. Difference / Comparison Questions</h3>
+  <details><summary>Q4. Differentiate between Linear and Non-Linear data structures.</summary>
+    <div class="inner"><p>Linear: elements arranged sequentially, traversed in a single run, easy to implement
+    (Array, Stack, Queue, Linked List). Non-Linear: elements can connect to multiple other elements, support
+    multi-level storage, harder to implement but more memory-efficient (Tree, Graph).</p></div>
+  </details>
+  <details><summary>Q5. Differentiate Big-O, Big-Omega and Big-Theta notations.</summary>
+    <div class="inner"><p>O = asymptotic upper bound (worst case); Ω = asymptotic lower bound (best case);
+    Θ = tight bound that holds only when O and Ω bounds coincide (average/exact growth). See Section 10.7
+    table for the full comparison.</p></div>
+  </details>
+  <details><summary>Q6. Differentiate Linear Search and Binary Search.</summary>
+    <div class="inner"><p>See the comparison table in Section 13.1 — key difference: Linear search needs no
+    sorted order and is O(n); Binary search needs sorted data and is O(log n).</p></div>
+  </details>
+  <details><summary>Q7. Differentiate best case, worst case and average case complexity.</summary>
+    <div class="inner"><p>Best case = minimum possible running time (input is most favourable). Worst case =
+    maximum possible running time over all inputs of size n (gives a guarantee, most commonly analysed).
+    Average case = expected running time averaged over all inputs (requires probability distribution of inputs).</p></div>
+  </details>
+
+  <h3>C. Algorithm / Dry-run Questions</h3>
+  <details><summary>Q8. Write the algorithm for Linear Search and trace it for A[]={5,3,8,1,9}, VAL=1.</summary>
+    <div class="inner"><p>See Section 12.1 for pseudocode. Trace: compare 5≠1, 3≠1, 8≠1, 1=1 → found at index 3
+    (0-indexed) after 4 comparisons.</p></div>
+  </details>
+  <details><summary>Q9. Write the algorithm for Binary Search and trace it for A[]={2,4,6,8,10,12,14}, VAL=10.</summary>
+    <div class="inner"><p>n=7, indices 0–6. BEG=0,END=6,MID=3→A[3]=8&lt;10→BEG=4. BEG=4,END=6,MID=5→A[5]=12&gt;10→END=4.
+    BEG=4,END=4,MID=4→A[4]=10 → found at index 4 in 3 comparisons.</p></div>
+  </details>
+  <details><summary>Q10. Prove that 3n² + 5n + 2 = O(n²).</summary>
+    <div class="inner"><p>Need c, n₀ such that 3n²+5n+2 ≤ c·n² for n≥n₀. For n≥1: 5n≤5n² and 2≤2n², so
+    3n²+5n+2 ≤ 3n²+5n²+2n² = 10n². Take c=10, n₀=1. Hence proved, 3n²+5n+2 = O(n²).</p></div>
+  </details>
+
+  <h3>D. Complexity Questions</h3>
+  <details><summary>Q11. What is the time and space complexity of Linear Search and Binary Search?</summary>
+    <div class="inner"><p>Linear Search: Time O(n) worst/avg, O(1) best; Space O(1).
+    Binary Search: Time O(log n) worst/avg, O(1) best; Space O(1) iterative / O(log n) recursive.</p></div>
+  </details>
+  <details><summary>Q12. Explain the Time–Space trade-off with an example.</summary>
+    <div class="inner"><p>See Section 9 — explain definition, real-life analogy (phone numbers), and the
+    searching-approaches table (linear search vs hash table vs binary search).</p></div>
+  </details>
+
+  <h3>E. Programming Questions</h3>
+  <details><summary>Q13. Write a C program to implement Linear Search.</summary>
+    <div class="inner"><p>See full working code in Section 12.1 ("C Implementation").</p></div>
+  </details>
+  <details><summary>Q14. Write a C program to implement Binary Search (iterative).</summary>
+    <div class="inner"><p>See full working code in Section 12.2 ("C Implementation (Iterative)").</p></div>
+  </details>
+  <details><summary>Q15. Write a recursive function for Binary Search.</summary>
+    <div class="inner"><p>See "Alternate Implementation — Recursive Binary Search" inside Section 12.2.</p></div>
+  </details>
+</section>
+
+<!-- ===================== 19. QUIZ ===================== -->
+<section class="section" id="quiz">
+  <h2>19. Final Quick MCQ Quiz</h2>
+  <div id="quizScoreBox">Score: <span id="scoreVal">0</span> / <span id="totalVal">0</span></div>
+  <div id="quizContainer"></div>
+</section>
+
+<footer>
+  DSA Unit 1 — Interactive Study Guide · Built from official syllabus & university lecture material (Basic
+  Concepts, Algorithm/Complexity/Asymptotic Notations, Searching) · For exam preparation use.
+</footer>
+
+</main>
+</div>
+
+<script>
+/* ---------- Copy Code Button ---------- */
+function copyCode(btn){
+  const pre = btn.parentElement.querySelector('pre code') || btn.parentElement.querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = "Copied!";
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent="Copy"; btn.classList.remove('copied');},1500);
+  });
+}
+
+/* ---------- Sidebar active link highlight ---------- */
+const links = document.querySelectorAll('.sidebar a');
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', ()=>{
+  let current = '';
+  sections.forEach(sec=>{
+    const top = sec.offsetTop - 100;
+    if(window.scrollY >= top) current = sec.getAttribute('id');
+  });
+  links.forEach(l=>{
+    l.classList.remove('active');
+    if(l.getAttribute('href') === '#'+current) l.classList.add('active');
+  });
+});
+
+/* close mobile sidebar on link click */
+links.forEach(l=>l.addEventListener('click',()=>{
+  document.querySelector('.sidebar').classList.remove('open');
+}));
+
+/* ---------- FLASHCARDS ---------- */
+const flashData = [
+  ["Algorithm","A finite sequence of well-defined, unambiguous instructions to solve a problem."],
+  ["Data Structure","A way of organizing & storing data with a defined set of permitted operations."],
+  ["Abstract Data Type (ADT)","A model defined by its behaviour (values+operations); implementation is hidden from the user."],
+  ["Time Complexity","Amount of time an algorithm takes to run, as a function of input size n."],
+  ["Space Complexity","Amount of memory an algorithm needs during execution."],
+  ["Best Case","Minimum running time — input most favourable to the algorithm."],
+  ["Worst Case","Maximum running time over all inputs of size n — gives an upper-bound guarantee."],
+  ["Average Case","Expected running time averaged over all possible inputs of size n."],
+  ["Big-O Notation O(g(n))","Asymptotic UPPER bound — f(n) ≤ c·g(n) for n≥n₀. Represents worst case."],
+  ["Big-Omega Ω(g(n))","Asymptotic LOWER bound — f(n) ≥ c·g(n) for n≥n₀. Represents best case."],
+  ["Big-Theta Θ(g(n))","Asymptotically TIGHT bound — c₁g(n) ≤ f(n) ≤ c₂g(n). Holds iff f=O(g) and f=Ω(g)."],
+  ["Little-o o(g(n))","Strict/loose upper bound: lim(n→∞) f(n)/g(n) = 0."],
+  ["Little-omega ω(g(n))","Strict/loose lower bound: lim(n→∞) f(n)/g(n) = ∞."],
+  ["Time–Space Trade-off","Using more memory to reduce time, or less memory at the cost of more time."],
+  ["Linear Search","Sequentially compares each element with target value; works on unsorted data; O(n)."],
+  ["Binary Search","Repeatedly halves a SORTED array to find target; O(log n)."],
+  ["Homogeneous Data Structure","Stores values of the same data type, e.g. Array."],
+  ["Non-Homogeneous Data Structure","Groups values of different data types, e.g. Structure/Class."]
+];
+const flashGrid = document.getElementById('flashGrid');
+flashData.forEach(([term,def])=>{
+  const card = document.createElement('div');
+  card.className='flashcard';
+  card.innerHTML = `<div class="inner-card">
+      <div class="flash-face flash-front">${term}</div>
+      <div class="flash-face flash-back">${def}</div>
+    </div>`;
+  card.addEventListener('click',()=>card.classList.toggle('flipped'));
+  flashGrid.appendChild(card);
+});
+
+/* ---------- MCQ QUIZ ---------- */
+const quizData = [
+  {
+    q:"1. Which of the following best defines a Data Structure?",
+    options:["A programming language","A way of organizing data with permitted operations","A type of algorithm","A hardware component"],
+    answer:1
+  },
+  {
+    q:"2. Which is a Non-Linear data structure?",
+    options:["Array","Queue","Tree","Stack"],
+    answer:2
+  },
+  {
+    q:"3. An ADT hides:",
+    options:["The input of the program","Implementation details","The output of the algorithm","The problem statement"],
+    answer:1
+  },
+  {
+    q:"4. Which case of an algorithm gives an absolute guarantee on running time?",
+    options:["Best case","Average case","Worst case","None of these"],
+    answer:2
+  },
+  {
+    q:"5. Big-O notation represents the:",
+    options:["Lower bound (best case)","Upper bound (worst case)","Exact running time always","Tight bound only"],
+    answer:1
+  },
+  {
+    q:"6. Which notation gives the asymptotically TIGHT bound?",
+    options:["O","Ω","Θ","o"],
+    answer:2
+  },
+  {
+    q:"7. If lim(n→∞) f(n)/g(n) = 0, then:",
+    options:["f(n) = Θ(g(n))","f(n) = ω(g(n))","f(n) = o(g(n))","f(n) = Ω(g(n)) only"],
+    answer:2
+  },
+  {
+    q:"8. Time–Space trade-off means:",
+    options:["Time and space always increase together","Using more memory can reduce time taken, or vice versa","Time complexity does not depend on space","None of these"],
+    answer:1
+  },
+  {
+    q:"9. Linear Search works best on:",
+    options:["Sorted arrays only","Unsorted or sorted arrays (order doesn't matter)","Only linked lists","Only binary trees"],
+    answer:1
+  },
+  {
+    q:"10. Binary Search requires the array to be:",
+    options:["Unsorted","Sorted","Circular","Doubly linked"],
+    answer:1
+  },
+  {
+    q:"11. Worst-case time complexity of Linear Search is:",
+    options:["O(1)","O(log n)","O(n)","O(n²)"],
+    answer:2
+  },
+  {
+    q:"12. Worst-case time complexity of Binary Search is:",
+    options:["O(1)","O(log₂n)","O(n)","O(n log n)"],
+    answer:1
+  },
+  {
+    q:"13. In Binary Search, MID is calculated as:",
+    options:["(BEG * END)/2","(BEG + END)/2","BEG + END","(BEG - END)/2"],
+    answer:1
+  },
+  {
+    q:"14. Which data structure is Homogeneous?",
+    options:["Structure","Class","Array","Object"],
+    answer:2
+  },
+  {
+    q:"15. Space complexity mainly accounts for:",
+    options:["Only instruction space","Instruction space, data space, and environment space","Only data space","Only environment space"],
+    answer:1
+  },
+  {
+    q:"16. Which statement about Θ-notation is TRUE?",
+    options:["f(n)=Θ(g(n)) only if f(n)=O(g(n))","f(n)=Θ(g(n)) iff f(n)=O(g(n)) AND f(n)=Ω(g(n))","Θ only gives an upper bound","Θ is unrelated to O and Ω"],
+    answer:1
+  },
+  {
+    q:"17. A naive recursive Fibonacci function has time complexity:",
+    options:["O(n)","O(log n)","O(2ⁿ)","O(n²)"],
+    answer:2
+  },
+  {
+    q:"18. Which operation means visiting every element of a structure exactly once?",
+    options:["Insertion","Deletion","Traversal","Merging"],
+    answer:2
+  },
+  {
+    q:"19. For the function 10n² - 3n, the tight bound is:",
+    options:["Θ(n)","Θ(n²)","Θ(n³)","Θ(log n)"],
+    answer:1
+  },
+  {
+    q:"20. An algorithm must terminate after a finite number of steps — this property is called:",
+    options:["Definiteness","Finiteness","Effectiveness","Generality"],
+    answer:1
+  }
+];
+
+const quizContainer = document.getElementById('quizContainer');
+document.getElementById('totalVal').textContent = quizData.length;
+let score = 0;
+let answeredSet = new Set();
+
+quizData.forEach((item, idx)=>{
+  const qDiv = document.createElement('div');
+  qDiv.className = 'quiz-q';
+  let optionsHtml = item.options.map((opt,i)=>`
+      <label>
+        <input type="radio" name="q${idx}" value="${i}"> ${opt}
+      </label>`).join('');
+  qDiv.innerHTML = `
+    <p class="question">${item.q}</p>
+    ${optionsHtml}
+    <button class="check-btn" onclick="checkAnswer(${idx})">Check Answer</button>
+    <div class="quiz-feedback" id="fb${idx}"></div>
+  `;
+  quizContainer.appendChild(qDiv);
+});
+
+function checkAnswer(idx){
+  const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+  const fb = document.getElementById('fb'+idx);
+  const labels = document.querySelectorAll(`input[name="q${idx}"]`);
+  const correctIndex = quizData[idx].answer;
+
+  labels.forEach(inp=>{
+    const label = inp.parentElement;
+    label.classList.remove('correct-ans','wrong-ans');
+  });
+
+  if(!selected){
+    fb.textContent = "Please select an option first.";
+    fb.className = "quiz-feedback wrong";
+    return;
+  }
+
+  const chosenIndex = parseInt(selected.value);
+  const correctLabel = labels[correctIndex].parentElement;
+  correctLabel.classList.add('correct-ans');
+
+  if(!answeredSet.has(idx)){
+    answeredSet.add(idx);
+    if(chosenIndex === correctIndex){
+      score++;
+      document.getElementById('scoreVal').textContent = score;
+    }
+  }
+
+  if(chosenIndex === correctIndex){
+    fb.textContent = "✅ Correct!";
+    fb.className = "quiz-feedback correct";
+  } else {
+    selected.parentElement.classList.add('wrong-ans');
+    fb.textContent = "❌ Incorrect. The correct answer is highlighted in green.";
+    fb.className = "quiz-feedback wrong";
+  }
+}
+</script>
+</body>
+</html>
